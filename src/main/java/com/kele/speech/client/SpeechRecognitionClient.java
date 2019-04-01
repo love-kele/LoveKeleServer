@@ -33,7 +33,7 @@ public class SpeechRecognitionClient {
         AipSpeech aipSpeech = new AipSpeech(APP_ID, API_Key, Sercet_Key);
 
         HashMap<String, Object> options = new HashMap<String, Object>();
-        options.put(Constants.Common.DEV_PID, Constants.LangType.PuTongHua_Model_Input);
+//        options.put(Constants.Common.DEV_PID, Constants.LangType.PuTongHua_Model_Input);
 
         JSONObject jsonObject = aipSpeech.asr(speechRequest.getData(), speechRequest.getFormat(), Constants.Common.rate, options);
 
