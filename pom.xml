@@ -7,9 +7,13 @@
     <groupId>com.love-kele-server</groupId>
     <artifactId>Love-Kele-Server</artifactId>
     <version>1.0-SNAPSHOT</version>
-
-
-<!--统一管理依赖版本-->
+    <packaging>jar</packaging>
+    <!--<parent>-->
+        <!--<groupId>org.springframework.boot</groupId>-->
+        <!--<artifactId>spring-boot-starter-parent</artifactId>-->
+        <!--<version>1.5.4.RELEASE</version>-->
+    <!--</parent>-->
+    <!--统一管理依赖版本-->
     <properties>
         <junit.version>4.12</junit.version>
         <spring.version>4.1.3.RELEASE</spring.version>
@@ -108,4 +112,23 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.0.5.RELEASE</version>
+                <configuration>
+                    <mainClass>com.Application</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
