@@ -1,45 +1,86 @@
 package com.kele.service.imp;
 
 import com.baidu.aip.util.Util;
+import com.kele.enums.BackCode;
+import com.kele.service.HanLpService;
+import com.kele.service.SpeechCodingService;
 import com.kele.service.SpeechRecognitionService;
 import com.kele.speech.client.SpeechRecognitionClient;
 import com.kele.speech.request.AndroidRequest;
 import com.kele.speech.request.SpeechRequest;
 import com.kele.speech.response.BaiduSdkResponse;
 import com.kele.speech.response.BaseResponse;
+import com.kele.utils.SpeechDecodingUtil;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.util.UUID;
 
+/**
+ * 语音识别
+ */
 @Service
 public class SpeechRecognitionServiceImpl implements SpeechRecognitionService {
+
+    private static final Logger logger = LoggerFactory.getLogger(SpeechRecognitionServiceImpl.class);
     @Autowired
     private SpeechRecognitionClient speechRecognitionClient;
 
-    public BaseResponse voice(AndroidRequest androidRequest) {
+    @Autowired
+    private HanLpService hanLpService;
+
+    @Autowired
+    private SpeechCodingService speechCodingService;
+
+    public BaseResponse<?> voice(AndroidRequest androidRequest) {
 
         SpeechRequest speechRequest = new SpeechRequest();
         MultipartFile multipartFile = androidRequest.getMultipartFile();
+        String originalFilename = multipartFile.getOriginalFilename();
+        File file = new File("d:/tmp/" + UUID.randomUUID().toString().toLowerCase() + originalFilename.substring(originalFilename.indexOf(".")));
         byte[] data = null;
-        String name = multipartFile.getOriginalFilename();
-        System.out.println(name);
         try {
-             data = multipartFile.getBytes();
-             speechRequest.setData(data);
-        } catch (IOException e) {
-            e.printStackTrace();
+
+            Util.writeBytesToFileSystem(multipartFile.getBytes(),file.getAbsolutePath());
+
+        } catch (Exception e) {
+            System.out.println(ExceptionUtils.getStackTrace(e));
         }
-        String substring = name.substring(name.indexOf(".")+1);
-        System.out.println(substring);
-        speechRequest.setFormat(substring);
 
+        String pcmSpeech = speechCodingService.getPcmSpeech(file);
 
+        try {
+            if(pcmSpeech!=null) {
+                data = SpeechDecodingUtil.readFileByBytes(pcmSpeech);
+            }else {
+                return new BaseResponse(Integer.valueOf(BackCode.SPEECH_PARSING_FAILED.getIndex()), BackCode.SPEECH_PARSING_FAILED.getName());
+
+            }
+            speechRequest.setData(data);
+
+        } catch (IOException e) {
+            logger.error(String.format("解析语音失败 Exception =%s", ExceptionUtils.getStackTrace(e)));
+            return new BaseResponse(Integer.valueOf(BackCode.SPEECH_PARSING_FAILED.getIndex()), BackCode.SPEECH_PARSING_FAILED.getName());
+        }
+        speechRequest.setFormat("pcm");
+
+        logger.info(String.format("语音识别开始 =========>语音文件 =%s", pcmSpeech));
         BaiduSdkResponse baiduSdkResponse = speechRecognitionClient.voiceToText(speechRequest);
+        //错误码不等于表示 语音识别失败
         if (baiduSdkResponse.getErr_no() != 0) {
+            logger.error(String.format("语音识别异常 err_no= %s ,err_msg= %s", baiduSdkResponse.getErr_no(), baiduSdkResponse.getErr_msg()));
             return new BaseResponse(baiduSdkResponse.getErr_no(), baiduSdkResponse.getErr_msg(), baiduSdkResponse);
         }
+        logger.info(String.format("语音识别结束 语音id =%s ,结果 =%s", baiduSdkResponse.getSn(), baiduSdkResponse.getResult()[0]));
+        hanLpService.LexicalAnalysis(baiduSdkResponse.getResult()[0]);
         return new BaseResponse(baiduSdkResponse);
     }
 }

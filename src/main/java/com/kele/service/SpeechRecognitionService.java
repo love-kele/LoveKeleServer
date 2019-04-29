@@ -5,5 +5,5 @@ import com.kele.speech.response.BaseResponse;
 
 public interface SpeechRecognitionService {
 
-    BaseResponse voice(AndroidRequest androidRequest);
+    BaseResponse<?> voice(AndroidRequest androidRequest);
 }

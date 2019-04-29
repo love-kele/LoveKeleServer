@@ -10,7 +10,8 @@ public enum BackCode {
     //语音识别错误
     ERROR_PARAMETERS("3300","输入参数不正确"),
     POOR_AUDIO_QUALITY("3301","音频质量过差"),
-    SERVER_ERROR("3303","语音服务器后端问题")
+    SERVER_ERROR("3303","语音服务器后端问题"),
+    SPEECH_PARSING_FAILED("50001","语音解析失败")
     ;
 
     private String name;

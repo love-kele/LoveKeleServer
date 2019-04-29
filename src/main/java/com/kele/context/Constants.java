@@ -32,5 +32,27 @@ public class Constants {
 
     }
 
+    public static class FFmpegConfig{
+
+
+        /**
+         * 编码后文件所放的位置
+         */
+        public static final String DEV_BASE_PATH="d:/ffmpeg/speech/";
+
+
+        public static class Command{
+
+
+            //ffmpeg -y  -i 16k.wav  -acodec pcm_s16le -f s16le -ac 1 -ar 16000 16k.pcm
+            public static  String WAV_TO_PCM="ffmpeg -y -i @%@&* -acodec pcm_s16le -f s16le -ac 1 -ar 16000 ($%#@)";
+
+
+            public static String getWavToPcm(String in,String out){
+
+                return WAV_TO_PCM.replace("@%@&*",in).replace("($%#@)",out);
+            }
+        }
+    }
 
 }
