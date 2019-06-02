@@ -14,6 +14,8 @@ public class Constants {
 
         public static final String DEV_PID="dev_pid";
 
+        public static final String ROBOT_API="http://openapi.tuling123.com/openapi/api/v2";
+
     }
 
     public static class LangType {

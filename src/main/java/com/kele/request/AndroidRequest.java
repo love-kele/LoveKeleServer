@@ -1,4 +1,4 @@
-package com.kele.speech.request;
+package com.kele.request;
 
 import org.springframework.web.multipart.MultipartFile;
 

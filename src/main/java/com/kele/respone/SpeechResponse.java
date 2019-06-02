@@ -1,4 +1,4 @@
-package com.kele.speech.response;
+package com.kele.respone;
 
 public class SpeechResponse {
     //状态码 0:成功 ,其他:失败

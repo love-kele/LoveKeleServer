@@ -1,6 +1,5 @@
-package com.kele.speech.request;
+package com.kele.request;
 
-import sun.audio.AudioData;
 
 
 public class SpeechRequest {
