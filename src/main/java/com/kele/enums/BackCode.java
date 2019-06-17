@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public enum BackCode {
     //全局错误类型
-    PASS("0", "操作成功"),
+    PASS("200", "操作成功"),
 
 
     //语音识别错误

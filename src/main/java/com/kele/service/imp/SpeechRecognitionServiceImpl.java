@@ -84,11 +84,14 @@ public class SpeechRecognitionServiceImpl implements SpeechRecognitionService {
     @Override
     public BaseResponse<?> talk(TalkRequest talkRequest) {
 
+        AndroidRequest androidRequest = new AndroidRequest();
+        androidRequest.setMultipartFile(talkRequest.getMultipartFile());
+
         SpeechRequest speechRequest = new SpeechRequest();
 
         speechRequest.setFormat(talkRequest.getType());
 
-        speechRequest.setData(talkRequest.getVoice());
+        speechRequest.setData(getData(androidRequest));
 
         BaiduSdkResponse baiduSdkResponse = speechRecognitionClient.voiceToText(speechRequest);
 
@@ -111,5 +114,34 @@ public class SpeechRecognitionServiceImpl implements SpeechRecognitionService {
 
         return new BaseResponse<>(talk);
 
+    }
+
+    private byte [] getData(AndroidRequest androidRequest){
+
+        MultipartFile multipartFile = androidRequest.getMultipartFile();
+        String originalFilename = multipartFile.getOriginalFilename();
+        File file = new File("d:/tmp/" + UUID.randomUUID().toString().toLowerCase() + originalFilename.substring(originalFilename.indexOf(".")));
+        byte[] data = null;
+        try {
+
+            Util.writeBytesToFileSystem(multipartFile.getBytes(), file.getAbsolutePath());
+
+        } catch (Exception e) {
+            System.out.println(ExceptionUtils.getStackTrace(e));
+        }
+
+        String pcmSpeech = speechCodingService.getPcmSpeech(file);
+
+        try {
+            if (pcmSpeech != null) {
+                data = SpeechDecodingUtil.readFileByBytes(pcmSpeech);
+            } else {
+
+            }
+        }catch (Exception e){
+
+        }
+
+        return  data;
     }
 }
