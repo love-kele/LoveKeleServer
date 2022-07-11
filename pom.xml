@@ -38,7 +38,7 @@
         <jedis.version>2.7.2</jedis.version>
         <solrj.version>4.10.3</solrj.version>
         <baidusdk.version>4.10.0</baidusdk.version>
-        <springboot.version>2.1.1.RELEASE</springboot.version>
+        <springboot.version>2.2.11.RELEASE</springboot.version>
     </properties>
 
     <dependencies>
